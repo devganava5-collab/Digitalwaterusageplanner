@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | Digital Water Planner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">💧 WaterPlanner</div>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/reports">Reports</a>
+            <a href="/tips">Tips</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="dashboard">
+
+        <div class="dashboard-header">
+
+            <div>
+                <span class="tag">SMART WATER MANAGEMENT</span>
+
+                <h1>
+                    Welcome,
+                    <span>{{ session.get("user_name", "User") }}</span> 👋
+                </h1>
+
+                <p>
+                    Monitor your water consumption and build
+                    smarter water-saving habits.
+                </p>
+            </div>
+
+            <div class="dashboard-date">
+                <strong>Today's Overview</strong>
+                <span>💧 Water Usage</span>
+            </div>
+
+        </div>
+
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">💧</div>
+                <div>
+                    <h3>{{ today_usage|round(1) }} L</h3>
+                    <p>Today's Usage</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div>
+                    <h3>{{ weekly_usage|round(1) }} L</h3>
+                    <p>Weekly Usage</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div>
+                    <strong>{{ goal_percent }}%</strong>
+                    <p>Daily Goal Used</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🏆</div>
+                <div>
+                    <h3>{{ water_score }}</h3>
+                    <p>Water Score</p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <section class="dashboard-grid">
+
+            <div class="dashboard-panel">
+
+                <h2>Quick Actions</h2>
+
+                <div class="action-grid">
+
+                    <a href="/add-usage" class="action-card">
+                        <span>💧</span>
+                        <strong>Add Usage</strong>
+                        <small>Record water consumption</small>
+                    </a>
+
+                    <a href="/set-limit" class="action-card">
+                        <span>🎯</span>
+                        <strong>Set Limit</strong>
+                        <small>Set your daily water goal</small>
+                    </a>
+
+                    <a href="/reports" class="action-card">
+                        <span>📈</span>
+                        <strong>View Reports</strong>
+                        <small>Analyze your usage</small>
+                    </a>
+
+                    <a href="/tips" class="action-card">
+                        <span>💡</span>
+                        <strong>Water Tips</strong>
+                        <small>Discover saving ideas</small>
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <div class="dashboard-panel">
+
+                <h2>Today's Goal</h2>
+
+                <div class="goal-circle {{ 'goal-over' if goal_percent >= 100 }}" style="--p: {{ goal_percent }}">
+                    <strong>{{ goal_percent }}%</strong>
+                    <span>Completed</span>
+                </div>
+
+                <p class="goal-text">
+                    {% if today_usage == 0 %}
+                        Start recording your water usage to track your daily goal.
+                    {% elif goal_percent >= 100 %}
+                        You've reached your daily limit of {{ daily_limit|round(0) }} L. Try to conserve for the rest of today.
+                    {% else %}
+                        {{ (daily_limit - today_usage)|round(1) }} L remaining of your {{ daily_limit|round(0) }} L daily goal.
+                    {% endif %}
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <section class="dashboard-panel chart-panel">
+
+            <h2>Last 7 Days Usage</h2>
+            <canvas id="usageChart"></canvas>
+
+        </section>
+
+    </main>
+
+    <script>
+        const ctx = document.getElementById('usageChart');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels | tojson }},
+                datasets: [{
+                    label: 'Liters Used',
+                    data: {{ chart_data | tojson }},
+                    backgroundColor: '#0789b4cc',
+                    borderColor: '#0789b4',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                scales: {
+                    y: { beginAtZero: true }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+
+</body>
+</html>

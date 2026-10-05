@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Reports | WaterPlanner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">💧 WaterPlanner</div>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="page-section">
+
+        <div class="page-header">
+            <span class="tag">USAGE ANALYTICS</span>
+            <h1>Your Water Reports</h1>
+            <p>Analyze your consumption patterns and spot opportunities to save.</p>
+        </div>
+
+        <section class="stats-grid">
+
+            <div class="stat-card">
+                <div class="stat-icon">🧾</div>
+                <div>
+                    <h3>{{ stats["entries"] }}</h3>
+                    <p>Total Entries</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div>
+                    <h3>{{ stats["total"]|round(1) }} L</h3>
+                    <p>Total Usage</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">📐</div>
+                <div>
+                    <h3>{{ stats["average"]|round(1) }} L</h3>
+                    <p>Average Entry</p>
+                </div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🚨</div>
+                <div>
+                    <h3>{{ days_over_limit }}</h3>
+                    <p>Days Over Limit</p>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="dashboard-panel report-panel">
+
+            <h2>Last 30 Days — Daily Totals</h2>
+
+            {% if daily %}
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Entries</th>
+                        <th>Usage</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in daily %}
+                    <tr>
+                        <td>{{ row["usage_date"] }}</td>
+                        <td>{{ row["entries"] }}</td>
+                        <td>{{ row["total"]|round(1) }} L</td>
+                        <td>
+                            {% if row["total"] > daily_limit %}
+                                <span class="badge badge-danger">Over Limit</span>
+                            {% else %}
+                                <span class="badge badge-ok">Within Limit</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-text">No usage recorded in the last 30 days yet. <a href="/add-usage">Add your first entry →</a></p>
+            {% endif %}
+
+        </section>
+
+        <section class="dashboard-panel report-panel">
+
+            <h2>Weekly Totals</h2>
+
+            {% if weekly %}
+            <table class="report-table">
+                <thead>
+                    <tr>
+                        <th>Week</th>
+                        <th>Total Usage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in weekly %}
+                    <tr>
+                        <td>{{ row["week"] }}</td>
+                        <td>{{ row["total"]|round(1) }} L</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="empty-text">Not enough data for weekly totals yet.</p>
+            {% endif %}
+
+        </section>
+
+        <a href="/dashboard" class="btn back-btn">← Back to Dashboard</a>
+
+    </main>
+
+    <footer>
+        © 2026 Digital Water Planner | Smart Water Conservation
+    </footer>
+
+</body>
+
+</html>

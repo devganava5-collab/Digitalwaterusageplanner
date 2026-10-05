@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Water Tips | WaterPlanner</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">💧 WaterPlanner</div>
+
+        <div>
+            <a href="/">Home</a>
+            <a href="/dashboard">Dashboard</a>
+            <a href="/logout">Logout</a>
+        </div>
+    </nav>
+
+    <main class="page-section">
+
+        <div class="page-header">
+            <span class="tag">SAVE EVERY DROP</span>
+            <h1>Water Saving Tips</h1>
+            <p>Small changes add up. Try a few of these easy habits today.</p>
+        </div>
+
+        <section class="tips-grid">
+
+            {% for tip in tips %}
+            <div class="tip-card">
+                <span class="tip-icon">{{ tip.icon }}</span>
+                <h3>{{ tip.title }}</h3>
+                <p>{{ tip.text }}</p>
+            </div>
+            {% endfor %}
+
+        </section>
+
+        <a href="/dashboard" class="btn back-btn">← Back to Dashboard</a>
+
+    </main>
+
+    <footer>
+        © 2026 Digital Water Planner | Smart Water Conservation
+    </footer>
+
+</body>
+
+</html>
